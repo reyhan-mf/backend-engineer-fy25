@@ -44,3 +44,10 @@ def get_items():
     
     result = Item.get_all(page, limit)
     return jsonify(result), 200
+
+@items_bp.route('/items/<int:item_id>', methods=['GET'])
+def get_item(item_id):
+    item = Item.get_by_id(item_id)
+    if not item:
+        return jsonify({'message': 'Item not found'}), 404
+    return jsonify(item), 200

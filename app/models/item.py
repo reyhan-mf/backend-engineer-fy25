@@ -29,4 +29,9 @@ class Item:
             'page': page,
             'per_page': per_page
         }
- 
+     
+    @staticmethod
+    def get_by_id(item_id):
+        db = get_db()
+        item = db.execute("SELECT * FROM items WHERE id = ?", (item_id,)).fetchone()
+        return dict(item) if item else None
