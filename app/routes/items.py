@@ -51,3 +51,47 @@ def get_item(item_id):
     if not item:
         return jsonify({'message': 'Item not found'}), 404
     return jsonify(item), 200
+
+
+@items_bp.route('/items/<int:item_id>', methods=['PUT'])
+@jwt_required()
+def update_item(item_id):
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({'message': 'No data provided'}), 400
+    
+    item = Item.get_by_id(item_id)
+    if not item:
+        return jsonify({'message': 'Item not found'}), 404
+    
+    user_id = get_jwt_identity()
+    if str(item['user_id']) != str(user_id):
+        return jsonify({'message': 'Unauthorized'}), 403
+    
+    name = data.get('name', item['name'])
+    description = data.get('description', item['description'])
+    status = data.get('status', item['status'])
+    
+    valid, error = validate_item(name, description)
+    if not valid:
+        return jsonify({'message': error}), 400
+    
+    Item.update(item_id, name, description, status, user_id)
+    return jsonify({'message': 'Item updated successfully'}), 200
+
+@items_bp.route('/items/<int:item_id>', methods=['DELETE'])
+@jwt_required()
+def delete_item(item_id):
+    item = Item.get_by_id(item_id)
+    if not item:
+        return jsonify({'message': 'Item not found'}), 404
+    
+    user_id = get_jwt_identity()
+    
+    if str(item['user_id']) != str(user_id):
+        print(f"User ID: {user_id}, Item User ID: {item['user_id']}")
+        return jsonify({'message': 'Unauthorized'}), 403
+    
+    Item.delete(item_id, user_id)
+    return jsonify({'message': 'Item deleted successfully'}), 200

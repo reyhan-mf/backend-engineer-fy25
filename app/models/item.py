@@ -35,3 +35,23 @@ class Item:
         db = get_db()
         item = db.execute("SELECT * FROM items WHERE id = ?", (item_id,)).fetchone()
         return dict(item) if item else None
+
+    @staticmethod
+    def update(item_id, name, description, status, user_id):
+        '''
+        UPDATE items SET name = ?, description = ?, status = ?, user_id = ? WHERE id = ?
+        '''
+        db = get_db()
+        db.execute("UPDATE items SET name = ?, description = ?, status = ?, user_id = ? WHERE id = ?", (name, description, status, user_id, item_id))
+        db.commit()
+        return True
+    
+    @staticmethod
+    def delete(item_id, user_id):
+        '''
+        DELETE FROM items WHERE id = ?
+        '''
+        db = get_db()
+        db.execute("DELETE FROM items WHERE id = ? and user_id = ?", (item_id, user_id))
+        db.commit()
+        return True

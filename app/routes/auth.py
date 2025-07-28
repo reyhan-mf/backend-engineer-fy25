@@ -54,5 +54,5 @@ def login():
 def profile():
     user_id = get_jwt_identity()
     user = User.get_by_id(user_id)
-    return jsonify({'email': user['email']}), 200
+    return jsonify({'email': user['email'], 'id': user_id}), 200
 

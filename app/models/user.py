@@ -12,13 +12,13 @@ class User:
             return cursor.lastrowid
         except db.IntegrityError:
             return None
-    
+
     @staticmethod
     def get_by_email(email):
         db = get_db()
         user = db.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
         return dict(user) if user else None
-    
+
     @staticmethod
     def get_by_id(user_id):
         db = get_db()
