@@ -30,3 +30,17 @@ def create_item():
     item_id = Item.create(name, description, user_id, status)
     
     return jsonify({'message': 'Item created successfully', 'id': item_id}), 201
+
+
+@items_bp.route('/items', methods=['GET'])
+def get_items():
+    page = request.args.get('page', 1, type=int)
+    limit = request.args.get('limit', 10, type=int)
+    
+    if page < 1:
+        page = 1
+    if limit < 1 or limit > 100:
+        limit = 10
+    
+    result = Item.get_all(page, limit)
+    return jsonify(result), 200
